@@ -42,7 +42,10 @@ To configure how the app is to reroute email addresses you must create a `./cont
 ## Sample Use case:
 
 A QA Tester wants to setup account creation in an application that has several roles.
-The QA tester has test cases to go through the process of setting up a dozen different user accounts, part of which involves the standard practice of emailing a confirmation code out to a user that they must enter retrieve from the email inbox and enter into a text field on the app to complete their account creation. This means access to a dozen different email inboxes.
+The QA tester has test cases that go through the process of setting up a dozen different user accounts.
+Part of the account setup process involves the standard practice of emailing a confirmation code out to a new user.
+That user must retrieve the code from their email inbox and enter it into a text field provided by the app to complete their account creation. 
+This means access to a dozen different email inboxes.
 The QA tester also wants to be organized and have these emails reflect the role of the users as defined in their test cases: 
 
 - admin
