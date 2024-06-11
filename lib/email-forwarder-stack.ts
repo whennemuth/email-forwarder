@@ -1,16 +1,26 @@
-import * as cdk from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { EmailForwardingRuleSet} from '@seeebiii/ses-email-forwarding';
+import { IContext } from '../contexts/IContext';
 
-export class EmailForwarderStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+export class EmailForwarderStack extends Stack {
+  constructor(scope: Construct, constructId: string, stackProps?: StackProps) {
+    super(scope, constructId, stackProps);
 
-    // The code that defines your stack goes here
+    const context:IContext = scope.node.getContext('stack-parms');
+    const { DOMAIN_NAME:domainName, FROM_PREFIX:fromPrefix, VERIFY_DOMAIN:verifyDomain=false, EMAIL_MAPPINGS:emailMappings, STACK_ID, TAGS } = context;
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'EmailForwarderQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    // Set the tags for the stack
+    var tags: object = TAGS;
+    for (const [key, value] of Object.entries(tags)) {
+      this.tags.setTag(key, value);
+    }
+
+    new EmailForwardingRuleSet(this, 'EmailForwardingRuleSet', {
+      enableRuleSet: true,
+      emailForwardingProps: [{
+        domainName, verifyDomain, fromPrefix, emailMappings
+      }]
+    });
   }
 }

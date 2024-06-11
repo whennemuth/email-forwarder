@@ -1,21 +1,27 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import * as cdk from 'aws-cdk-lib';
+import { App, CfnOutput, StackProps, Tags } from 'aws-cdk-lib';
 import { EmailForwarderStack } from '../lib/email-forwarder-stack';
+import { IContext } from '../contexts/IContext';
+import * as ctx from '../contexts/context.json';
 
-const app = new cdk.App();
-new EmailForwarderStack(app, 'EmailForwarderStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
+const context:IContext = <IContext>ctx;
+const { ACCOUNT:account, REGION:region, STACK_ID, TAGS: { Function, Landscape, Service } } = context;
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+const app = new App();
+app.node.setContext('stack-parms', context);
+const stackName = `${STACK_ID}-${Landscape}`;
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+const stackProps: StackProps = {
+  stackName,
+  description: 'Email/SMTP forwarder - Performs a many-to-one rerouting operation for any of a series of pseudo email addresses to one real email address. Inteneded to aid developers and QA testers.',
+  env: { account, region },
+  tags: { Service, Function, Landscape }
+}
 
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+const stack:EmailForwarderStack = new EmailForwarderStack(app, stackName, stackProps);
+
+// Adding tags into the stackProps does not seem to work - have to apply tags using aspects:
+Tags.of(stack).add('Service', Service);
+Tags.of(stack).add('Function', Function);
+Tags.of(stack).add('Landscape', Landscape);
