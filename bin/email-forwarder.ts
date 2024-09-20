@@ -14,7 +14,7 @@ const stackName = `${STACK_ID}-${Landscape}`;
 
 const stackProps: StackProps = {
   stackName,
-  description: 'Email/SMTP forwarder - Performs a many-to-one rerouting operation for any of a series of pseudo email addresses to one real email address. Inteneded to aid developers and QA testers.',
+  description: 'Email/SMTP forwarder - Performs a many-to-one rerouting operation for any of a series of pseudo email addresses to one real email address. Intended to aid developers and QA testers.',
   env: { account, region },
   tags: { Service, Function, Landscape }
 }
